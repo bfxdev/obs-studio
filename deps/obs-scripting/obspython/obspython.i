@@ -50,9 +50,10 @@ static inline void wrap_blog(int log_level, const char *message)
  * %newobject obs_module_get_config_path; */
 %typemap(newfree) char * "bfree($1);";
 
-
-
 ///////////////////////////////////////////////////////////////////////
+
+// %typemap(in) SWIGTYPE
+
 
 // Defines a temporary variable to hold the value and assigns its address to the argument
 %typemap(arginit, noblock=1) uint32_t *OUTREF {
@@ -71,6 +72,7 @@ static inline void wrap_blog(int log_level, const char *message)
 %typemap(typecheck) uint32_t *OUTREF "// typemap(typecheck)";
 %typemap(check) uint32_t *OUTREF "// typemap(check)";
 %typemap(default) uint32_t *OUTREF "// typemap(default)";
+%typemap(doc) uint32_t *OUTREF "// typemap(doc)";
 
 void gs_get_size(uint32_t *OUTREF, uint32_t *OUTREF);
 
@@ -80,8 +82,11 @@ void gs_get_size(uint32_t *OUTREF, uint32_t *OUTREF);
 
 %typemap(argout, noblock=1) uint8_t **OUTREF {
   // OUTREF typemap(out) for OBS see obspython.i
+  //$result = SWIG_Python_AppendOutput($result, PyLong_FromLongLong(*(long long *)temp$argnum) );
+  // $result = SWIG_Python_AppendOutput($result, PyLong_FromVoidPtr((void *)temp$argnum) );
   int size = gs_stagesurface_get_height(arg1)*(*arg3);
-  $result = SWIG_Python_AppendOutput($result, PyByteArray_FromStringAndSize((const char *)temp$argnum, size));
+  $result = SWIG_Python_AppendOutput($result, PyBytes_FromStringAndSize((const char *)temp$argnum, size) );
+
 }
 
 
